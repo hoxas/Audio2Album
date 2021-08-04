@@ -14,38 +14,38 @@ from pydub.utils import mediainfo
 # print(eid.EasyID3.valid_keys.keys())
 
 ### Setup Functions
-# from string to datetime
-def getTime(t):
-    if str(t).upper() == 'END':
-        return 'END'
 
-    if '.' in t:
-        mili = '.%f'
-    else:
-        mili = ''
+help = '''
+Audio2Album
 
-    try:
-        t = datetime.strptime(t, f'%H:%M:%S{mili}')
-    except:
-        try:
-            t = datetime.strptime(t, f'%M:%S{mili}')
-        except:
-            t = datetime.strptime(t, f'%S{mili}')
-    return t
+Usage:
+    python Audio2Album.py [optional arg1] [optional arg2]
 
-# to milliseconds
-def toMilli(t):
-    if t == 'END':
-        return totalt * 1000
+Args:
+    ->  h or help: Prints this screen
+        
+    ->  mktxt: Makes text file for easier use
+            |-> arg2: Name of output txt file
+        
+    ->  path/to/track: Path to mp3 that is gonna be cut
+            |-> arg2: path to txt file that contains the parameters
 
-    t_timedelta = t - datetime(1900, 1, 1)
-    seconds = t_timedelta.total_seconds()
-    return seconds * 1000
+If no arg is given then the program asks for the info as it is needed
 
-# clean up paths
+* (CTRL + C) to close
+'''
+
+try:
+    if sys.argv[1] == 'h' or sys.argv[1] == 'help': 
+        print(help)
+        exit()    
+except IndexError:
+    pass
+
 def getPath(filename):
+    '''Clean up path string(filename)'''
+
     if os.path.isabs(filename):
-        print('isabs')
         pathfile = filename
         return pathfile
     else:
@@ -76,6 +76,38 @@ try:
         exit()
 except:
     pass
+
+def getTime(t):
+    '''From string(t) to datetime object'''
+
+    if str(t).upper() == 'END':
+        return 'END'
+
+    if '.' in t:
+        mili = '.%f'
+    else:
+        mili = ''
+
+    try:
+        t = datetime.strptime(t, f'%H:%M:%S{mili}')
+    except:
+        try:
+            t = datetime.strptime(t, f'%M:%S{mili}')
+        except:
+            t = datetime.strptime(t, f'%S{mili}')
+    return t
+
+def toMilli(t):
+    '''From datetime(t) to int(milliseconds)'''
+
+    if t == 'END':
+        return totalt * 1000
+
+    t_timedelta = t - datetime(1900, 1, 1)
+    seconds = t_timedelta.total_seconds()
+    return seconds * 1000
+
+
 
 category = {}
 
@@ -193,5 +225,6 @@ def main():
 
             track += 1
 
-    
+if __name__ == '__main__':
+    main()   
 
