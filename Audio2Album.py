@@ -13,37 +13,13 @@ from pydub.utils import mediainfo
 
 # print(eid.EasyID3.valid_keys.keys())
 
+
+
 ### Setup Functions
-# from string to datetime
-def getTime(t):
-    if str(t).upper() == 'END':
-        return 'END'
 
-    if '.' in t:
-        mili = '.%f'
-    else:
-        mili = ''
 
-    try:
-        t = datetime.strptime(t, f'%H:%M:%S{mili}')
-    except:
-        try:
-            t = datetime.strptime(t, f'%M:%S{mili}')
-        except:
-            t = datetime.strptime(t, f'%S{mili}')
-    return t
-
-# to milliseconds
-def toMilli(t):
-    if t == 'END':
-        return totalt * 1000
-
-    t_timedelta = t - datetime(1900, 1, 1)
-    seconds = t_timedelta.total_seconds()
-    return seconds * 1000
-
-# clean up paths
 def getPath(filename):
+    '''Clean up paths'''
     if os.path.isabs(filename):
         print('isabs')
         pathfile = filename
@@ -79,20 +55,57 @@ except:
 
 category = {}
 
-def sliceMain():
-    # cut track 
-    cuttrack = file[mstart:mend]
+class Cut:
+    def __init__(self, start, end):
+        self.start = getTime(start)
+        self.end = getTime(end)
+        self.mstart = toMilli(start)
+        self.mend = toMilli(end)
 
-    # exporting
+    def getTime(t):
+        '''Convert string to datetime'''
 
-    if track < 10:
-        zero = '0'
-    else:
-        zero = ''
+        if str(t).upper() == 'END':
+            return 'END'
 
-    trackname = f"{zero}{track}. {category['title']}.mp3"
-    
-    cuttrack.export(trackname, format='mp3', bitrate=tbitrate)
+        if '.' in t:
+            mili = '.%f'
+        else:
+            mili = ''
+
+        try:
+            t = datetime.strptime(t, f'%H:%M:%S{mili}')
+        except:
+            try:
+                t = datetime.strptime(t, f'%M:%S{mili}')
+            except:
+                t = datetime.strptime(t, f'%S{mili}')
+        return t
+
+    def toMilli(t):
+        '''Convert datetime object to milliseconds'''
+
+        if t == 'END':
+            return totalt * 1000
+
+        t_timedelta = t - datetime(1900, 1, 1)
+        seconds = t_timedelta.total_seconds()
+        return seconds * 1000
+
+    def sliceMain():
+        # cut track 
+        cuttrack = file[self.mstart:self.mend]
+
+        # exporting
+
+        if track < 10:
+            zero = '0'
+        else:
+            zero = ''
+
+        trackname = f"{zero}{track}. {category['title']}.mp3"
+        
+        cuttrack.export(trackname, format='mp3', bitrate=tbitrate)
 
     # tagging 
     exported = eid.EasyID3(trackname)
