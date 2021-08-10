@@ -1,12 +1,6 @@
 from setuptools import setup
-from os import path
 
 appversion = '0.0.0'
-
-here = path.abspath(path.dirname(__file__))
-
-with open(here + '/audio2album/__init__.py') as initpy:
-    initpy.write(f'__version__  = {appversion}')
 
 setup(
     name = 'audio2album',
