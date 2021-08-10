@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 appversion = '0.0.0'
 
@@ -25,7 +25,7 @@ setup(
         'mutagen==1.45.1',
         'pydub==0.25.1'
     ],
-    packages = ['audio2album'],
+    packages = find_packages(exclude="tests"),
     entry_points = {
         'console_scripts': [
             'audio2album = audio2album.__main__:main'

@@ -1,7 +1,7 @@
 import os, sys
 
-from Editor import Cut
-from PathTool import getPath
+from .Editor import Cut
+from .PathTool import getPath
 
 ## FFMPEG ON PATH
 
