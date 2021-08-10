@@ -1,8 +1,11 @@
+import os
 from mutagen.mp3 import MP3
 from mutagen import easyid3 as eid
 from pydub import AudioSegment
 from pydub.utils import mediainfo
 from datetime import datetime
+from pathlib import Path
+
 
 # print(eid.EasyID3.valid_keys.keys())
 
@@ -52,11 +55,11 @@ class Cut:
 
         self.trackname = f"{zero}{self.category['track']}. {self.category['title']}.mp3"
         
-        cuttrack.export(self.trackname, format='mp3', bitrate=self.tbitrate)
+        cuttrack.export(f"{self.outpath}\{self.trackname}", format='mp3', bitrate=self.tbitrate)
     
     def tag(self):
         # tagging 
-        exported = eid.EasyID3(f'.\{self.trackname}')
+        exported = eid.EasyID3(f'{self.outpath}\{self.trackname}')
 
         exported['tracknumber'] = self.category['track']
         exported['title'] = self.category['title']
@@ -92,7 +95,11 @@ class Cut:
             #check if end higher than total track time
             if self.mend > self.mtotalt:
                 self.mend = self.mtotalt
-
+        
+        self.folder = f"{self.category['artist']} - {self.category['album']}"
+        self.outpath = os.path.join(os.getcwd(), self.folder)
+            
+        Path(self.outpath).mkdir(parents=True, exist_ok=True)
         self.slice()
         self.tag()
 
