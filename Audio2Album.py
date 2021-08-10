@@ -1,20 +1,11 @@
 import os, sys
 
-from datetime import datetime
-
-from pathlib import Path
+from Editor import Cut
+from PathTool import getPath
 
 ## FFMPEG ON PATH
 
-from mutagen.mp3 import MP3
-from mutagen import easyid3 as eid
-from pydub import AudioSegment
-from pydub.utils import mediainfo
-
-# print(eid.EasyID3.valid_keys.keys())
-
 ### Setup Functions
-
 help = '''
 Audio2Album
 
@@ -35,24 +26,13 @@ If no arg is given then the program asks for the info as it is needed
 * (CTRL + C) to close
 '''
 
+# print help
 try:
     if sys.argv[1] == 'h' or sys.argv[1] == 'help': 
         print(help)
         exit()    
 except IndexError:
     pass
-
-def getPath(filename):
-    '''Clean up path string(filename)'''
-
-    if os.path.isabs(filename):
-        pathfile = filename
-        return pathfile
-    else:
-        filename = filename.lstrip('/\.')
-        filename = filename.replace('/', '\\')
-        pathfile = os.path.join(os.getcwd(), filename)
-        return pathfile
 
 # create txt file for easier use
 try:
@@ -77,65 +57,8 @@ try:
 except:
     pass
 
-def getTime(t):
-    '''From string(t) to datetime object'''
-
-    if str(t).upper() == 'END':
-        return 'END'
-
-    if '.' in t:
-        mili = '.%f'
-    else:
-        mili = ''
-
-    try:
-        t = datetime.strptime(t, f'%H:%M:%S{mili}')
-    except:
-        try:
-            t = datetime.strptime(t, f'%M:%S{mili}')
-        except:
-            t = datetime.strptime(t, f'%S{mili}')
-    return t
-
-def toMilli(t):
-    '''From datetime(t) to int(milliseconds)'''
-
-    if t == 'END':
-        return totalt * 1000
-
-    t_timedelta = t - datetime(1900, 1, 1)
-    seconds = t_timedelta.total_seconds()
-    return seconds * 1000
-
-
 
 category = {}
-
-def sliceMain():
-    # cut track 
-    cuttrack = file[mstart:mend]
-
-    # exporting
-
-    if track < 10:
-        zero = '0'
-    else:
-        zero = ''
-
-    trackname = f"{zero}{track}. {category['title']}.mp3"
-    
-    cuttrack.export(trackname, format='mp3', bitrate=tbitrate)
-
-    # tagging 
-    exported = eid.EasyID3(trackname)
-
-    exported['tracknumber'] = str(track)
-    exported['title'] = category['title']
-    exported['artist'] = category['artist']
-    exported['albumartist'] = category['artist']
-    exported['album'] = category['album']
-    exported['date'] = category['release']
-    exported.save()
 
 ### Main Program Start
 def main():
@@ -149,13 +72,7 @@ def main():
     # get and filter path
     pathfile = getPath(filename)
 
-    # getting input bitrate
-    tbitrate = mediainfo(pathfile)['bit_rate']
-    # opening file
-    file = AudioSegment.from_mp3(pathfile)
-    # get total length (unused still)
-    totalt = MP3(pathfile).info.length
-    print(totalt)
+    
 
     ### IF TXT FILE PATH GIVEN
     if len(sys.argv) == 3:
@@ -169,16 +86,17 @@ def main():
                     # Getting tracktime and cutting
                     if isTrack == True:
                         x = line.split('.')
-                        track = int(x[0])
+                        category['track'] = x[0]
                         y = x[1].split('--')
                         category['title'] = y[0].strip()
+                        
+                        start = y[1].strip()
+                        end = y[2].strip()
 
-                        tstart = getTime(y[1].strip())
-                        mstart = toMilli(tstart)
-                        tend = getTime(y[2].strip())
-                        mend = toMilli(tend)
+                        Cut(pathfile, start, end, category)
+                        
+                        print(f'Track {category["track"]} - {category["title"]} -> Exported')
 
-                        sliceMain(file)
                     
                     # Activates track condition above
                     if 'VVV' in line:
@@ -203,27 +121,23 @@ def main():
         print('How many trks: ')
         numberoftracks = int(input())
 
-        track = 1
+        category['track'] = 1
 
         # Getting times by input
-        while track <= numberoftracks:
+        while category['track'] <= numberoftracks:
             print('Track: ')
-            tname = input()
+            category['title'] = input()
 
             # get times
             print('Start (h:m:s): ')
-            tstart = getTime(input())
-            mstart = toMilli(tstart)
+            start = input()
 
             print('End (h:m:s): ')
-            tend = getTime(input())
-            mend = toMilli(tend)
+            end = input()
 
-            print(mstart, mend)
+            Cut(pathfile, start, end, category)
 
-            sliceMain(file)
-
-            track += 1
+            category['track'] += 1
 
 if __name__ == '__main__':
     main()   
