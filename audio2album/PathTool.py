@@ -1,7 +1,7 @@
 import os
 
 def getPath(filename):
-    '''Clean up path string(filename)'''
+    '''Clean up/format path string(filename)'''
 
     if os.path.isabs(filename):
         pathfile = filename

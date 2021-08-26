@@ -1,6 +1,8 @@
 from setuptools import setup, find_packages
+from os import path
 
-appversion = '0.0.0'
+appversion = '0.0.1'
+
 
 setup(
     name = 'audio2album',
@@ -23,7 +25,9 @@ setup(
     python_requires = '>=3.6',
     install_requires = [
         'mutagen==1.45.1',
-        'pydub==0.25.1'
+        'pydub==0.25.1',
+        'docopt==0.6.2',
+        'youtube-dl==2021.6.6'
     ],
     packages = find_packages(exclude="tests"),
     entry_points = {

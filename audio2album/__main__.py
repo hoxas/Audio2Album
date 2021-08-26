@@ -1,49 +1,46 @@
-import os, sys
-
-from .Editor import Cut
-from .PathTool import getPath
-
-## FFMPEG ON PATH
-
-### Setup Functions
-help = '''
-Audio2Album
+'''
+audio2album
 
 Usage:
-    python Audio2Album.py [optional arg1] [optional arg2]
+    audio2album [options | URL] [TXTPATH] [--keepfile]
 
-Args:
-    ->  h or help: Prints this screen
-        
-    ->  mktxt: Makes text file for easier use
-            |-> arg2: Name of output txt file
-        
-    ->  path/to/track: Path to mp3 that is gonna be cut
-            |-> arg2: path to txt file that contains the parameters
+Options:
+    -h --help                       Show this screen
+    -v --version                    Show version
+    -d --debug                      Verbose logging
+    --mktxt                         Makes txt file for easier use (Accepts txt output path)
+    --keepfile                      Keeps downloaded uncut file
+                                    
 
-If no arg is given then the program asks for the info as it is needed
+URL = path/to/mp3
+
+TXTPATH = path to text file/output OR youtube URL
+
+If no arg is given the program asks for the info as it is needed
 
 * (CTRL + C) to close
 '''
 
-# print help
-try:
-    if sys.argv[1] == 'h' or sys.argv[1] == 'help': 
-        print(help)
-        exit()    
-except IndexError:
-    pass
+import os, sys, pkg_resources
 
-# create txt file for easier use
-try:
-    if sys.argv[1] == 'mktxt':
-        try:
-            name = getPath(sys.argv[2]) + '.txt'
-            w = open(name, 'w')
-        except:
-            w = open(getPath('ToAlbumStamps.txt'), 'w')
+from docopt import docopt
 
-        lines = [
+from .Editor import Cut
+from .PathTool import getPath
+from .YtMP3Downloader import download
+
+## FFMPEG ON PATH
+
+### Setup
+
+__version__ = pkg_resources.require('audio2album')[0].version
+
+arguments = docopt(__doc__, version=f'audio2album {__version__}')
+print(arguments)
+
+if arguments['--mktxt']:
+    """Create txt file for easy use"""
+    lines = [
             'Album:\n', 
             'Artist:\n', 
             'Release:\n',  
@@ -51,11 +48,25 @@ try:
             '1.Track--Start--End\n',
             '2.\n'
             ]
+
+    def writer(filepath):
+        w = open(filepath, 'w')
         for line in lines:
             w.write(line)
         exit()
-except:
-    pass
+    
+    if arguments['TXTPATH']:
+        filepath = getPath(arguments['TXTPATH']) + '.txt'
+    else:
+        filepath = getPath('ToAlbumStamps.txt')
+    
+    print(f'Writing file:\n    {filepath}')
+    writer(filepath)
+
+    
+
+    
+    
 
 
 category = {}
@@ -63,20 +74,28 @@ category = {}
 ### Main Program Start
 def main():
     # Test for given filepath/name
-    try:
-        filename = sys.argv[1]
-    except:
-        print('Enter file: ')
+    
+    if arguments['URL']:
+        filename = arguments['URL']
+    else:
+        print('Enter file path/ytURL: ')
         filename = input()
 
     # get and filter path
-    pathfile = getPath(filename)
+    if 'youtube.com/' in filename:
+        youtube = True
+        print('Youtube: ' + filename)
+        pathfile = getPath(download(filename) + '.mp3')
+    else:
+        youtube = False
+        print('Path: ' + filename)
+        pathfile = getPath(filename)
 
     
 
     ### IF TXT FILE PATH GIVEN
-    if len(sys.argv) == 3:
-        txtpath = getPath(sys.argv[2])
+    if arguments['TXTPATH']:
+        txtpath = arguments['TXTPATH']
         # check if txt is there
         if os.path.isfile(txtpath):
             with open(txtpath, 'r') as r:
@@ -118,14 +137,14 @@ def main():
         print('Date: ')
         category['release'] = input()
 
-        print('How many trks: ')
+        print('How many tracks: ')
         numberoftracks = int(input())
 
         category['track'] = 1
 
         # Getting times by input
         while category['track'] <= numberoftracks:
-            print('Track: ')
+            print('Trackname: ')
             category['title'] = input()
 
             # get times
@@ -133,11 +152,18 @@ def main():
             start = input()
 
             print('End (h:m:s): ')
-            end = input()
+            end = input();
 
             Cut(pathfile, start, end, category)
 
             category['track'] += 1
+
+    if youtube == True:
+        if arguments['--keepfile']:
+            print(f'Keeping file: {pathfile}')
+        else:
+            print(f'Deleting: {pathfile}')
+            os.remove(pathfile)
 
 if __name__ == '__main__':
     main()   

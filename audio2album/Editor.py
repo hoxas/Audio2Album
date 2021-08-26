@@ -70,7 +70,7 @@ class Cut:
         exported.save()
 
 
-    def __init__(self, pathfile, start, end, category):
+    def __init__(self, pathfile: str, start: str, end: str, category: list):
         # opening file
         self.file = AudioSegment.from_mp3(pathfile)
 
