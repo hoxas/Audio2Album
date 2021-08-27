@@ -25,7 +25,7 @@ import os, pkg_resources, logging
 from docopt import docopt
 
 from .Editor import Cut
-from .PathTool import getPath
+from .PathTool import getPath, checkFFMPEG
 from .YtMP3Downloader import download
 
 ## FFMPEG ON PATH
@@ -37,11 +37,17 @@ __version__ = pkg_resources.require('audio2album')[0].version
 arguments = docopt(__doc__, version=f'audio2album {__version__}')
 
 if arguments['--debug']:
-    LOG_FORMAT = "%(levelname)s | %(asctime)s V \n$ %(message)s"
+    LOG_FORMAT = "%(levelname)s | %(asctime)s §\n$ %(message)s\n"
     logging.basicConfig(level=logging.DEBUG,
                         format=LOG_FORMAT)
 
     log = logging.getLogger(__name__)
+
+    if checkFFMPEG():
+        log.debug('ffmpeg found!')
+    else:
+        log.debug('ffmpeg not found, please install ffmpeg & add to path before using')
+
     log.debug(f'Docopt:\n {arguments}')
 
 if arguments['--mktxt']:

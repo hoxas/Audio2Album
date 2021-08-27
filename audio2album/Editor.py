@@ -10,17 +10,23 @@ from pathlib import Path
 # print(eid.EasyID3.valid_keys.keys())
 
 class Cut:
-    """Slice audio clips & Export (pathfile, start, end, category)
+    """
+    Slice audio clips & Export (pathfile, start, end, category)
 
     Arguments:
-    str(pathfile): Path to mp3
-    str(start): Start of cut
-    str(end): End of cut
-    list(category): Tagging parameters 
+        :pathfile -> str: Path to mp3
+        :start -> str: Start of cut
+        :end -> str: End of cut
+        :category -> list: Tagging parameters 
     """
 
     def getTime(self, t):
-        '''From string(t) to datetime object'''
+        """
+        From string(t) to datetime object
+        
+        :rtype: datetime
+        :return: datetime object
+        """
 
         if '.' in t:
             mili = '.%f'
