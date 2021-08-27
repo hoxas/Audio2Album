@@ -17,8 +17,8 @@ setup(
         'Intended Audience :: End Users/Desktop',
         'Topic :: Multimedia :: Sound/Audio',
         'License :: Public Domain',
-        'Programming Language :: Python :: 3'
-        'Programming Language :: Python :: 3.6'
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.9'
     ],
     keywords = ['audio', 'album', 'music', 'cli', 'albums', 'cut', 'slice', 'id3'],
