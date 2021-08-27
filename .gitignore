@@ -2,7 +2,6 @@
 *.exe
 *.mp3
 */
-*.cfg
 test.py
 *.txt
 test_*
