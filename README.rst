@@ -10,6 +10,25 @@ Description
 
 **Python 3.9**
 
+Installation
+------------
+
+From PyPI
+~~~~~~~~~
+
+``pip3 install audio2album``
+
+OR w/ pipx (recommended)
+
+``pipx install audio2album``
+
+From Source
+~~~~~~~~~~~
+
+1. Clone the project or `download and extract the zip <https://github.com/hoxas/Audio2Album/archive/master.zip>`_
+2. ``cd`` to the project directory containing the ``setup.py``
+3. ``python setup.py install`` or ``pipx install .``
+
 Details
 -------
 
