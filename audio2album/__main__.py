@@ -9,19 +9,18 @@ Options:
     -v --version                    Show version
     -d --debug                      Verbose logging
     --mktxt                         Makes txt file for easier use (Accepts txt output path)
-    --keepfile                      Keeps downloaded uncut file
-                                    
+    --keepfile                      Keeps downloaded uncut file                                    
 
-URL = path/to/mp3
-
-TXTPATH = path to text file/output OR youtube URL
+Arguments:
+    URL         path/to/mp3 or youtube.com/url
+    TXTPATH     path/to/txtfile -> parse or output
 
 If no arg is given the program asks for the info as it is needed
 
 * (CTRL + C) to close
 '''
 
-import os, sys, pkg_resources
+import os, pkg_resources, logging
 
 from docopt import docopt
 
@@ -36,7 +35,14 @@ from .YtMP3Downloader import download
 __version__ = pkg_resources.require('audio2album')[0].version
 
 arguments = docopt(__doc__, version=f'audio2album {__version__}')
-print(arguments)
+
+if arguments['--debug']:
+    LOG_FORMAT = "%(levelname)s | %(asctime)s V \n$ %(message)s"
+    logging.basicConfig(level=logging.DEBUG,
+                        format=LOG_FORMAT)
+
+    log = logging.getLogger(__name__)
+    log.debug(f'Docopt:\n {arguments}')
 
 if arguments['--mktxt']:
     """Create txt file for easy use"""
@@ -84,11 +90,11 @@ def main():
     # get and filter path
     if 'youtube.com/' in filename:
         youtube = True
-        print('Youtube: ' + filename)
+        log.debug('Youtube: ' + filename)
         pathfile = getPath(download(filename) + '.mp3')
     else:
         youtube = False
-        print('Path: ' + filename)
+        log.debug('Path: ' + filename)
         pathfile = getPath(filename)
 
     
@@ -167,4 +173,3 @@ def main():
 
 if __name__ == '__main__':
     main()   
-
