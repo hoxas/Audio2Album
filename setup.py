@@ -6,7 +6,7 @@ appversion = '0.0.1'
 setup(
     name = 'audio2album',
     version = appversion,
-    description = 'audio2album slices mp3 files and tags them with metadata',
+    description = 'audio2album slices mp3s/youtubeURLs and tags them with metadata',
     long_description = open('README.rst').read(),
     url = 'http://github.com/hoxas/Audio2Album',
     author = 'hoxas',
