@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
     
-appversion = '0.0.1'
+appversion = '0.0.2'
 
 
 setup(
@@ -9,7 +9,7 @@ setup(
     description = 'audio2album slices mp3s/youtubeURLs and tags them with metadata',
     long_description = open('README.rst').read(),
     url = 'http://github.com/hoxas/Audio2Album',
-    download_url = 'https://github.com/hoxas/Audio2Album/archive/refs/tags/v0.0.1.tar.gz',
+    download_url = 'https://github.com/hoxas/Audio2Album/archive/refs/tags/v0.0.2.tar.gz',
     author = 'hoxas',
     author_email = 'hoxas@live.com',
     license = 'unlicense',
