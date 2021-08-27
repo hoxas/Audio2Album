@@ -6,7 +6,7 @@ cut mp3 into albums with metadata tagging and youtube-dl
 Description
 -----------
 
-**audio2album** is a CLI to cut mp3s and tags them, it also accepts an youtube URL as the mp3 path. audi2album also features a .txt parser which reads the inputs rather than manually entering then in the command line.
+**audio2album** is a CLI to cut mp3s and tags them, it also accepts an youtube URL as the mp3 path. audio2album also features a .txt parser which reads the inputs rather than manually entering then in the command line.
 
 **Python 3.9**
 
